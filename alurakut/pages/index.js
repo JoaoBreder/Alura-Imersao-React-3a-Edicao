@@ -23,6 +23,29 @@ function ProfileSidebar(propriedades){
   )
 }
 
+function ProfileRelationsBox(propriedades){
+  return (
+    <ProfileRelationsBoxWrapper>
+      <h2 className="smallTitle">
+        {propriedades.title} ({propriedades.items.length})
+      </h2>
+
+      <ul>
+        {/* {propriedades.items.map((itemAtual) => {
+          return (
+            <li key={itemAtual}>
+              <a href={`https://github.com/${itemAtual}.png`}>
+                <img src={itemAtual} />
+                <span>{itemAtual}</span>
+              </a>
+            </li>
+          )
+        })} */}
+      </ul>
+    </ProfileRelationsBoxWrapper>
+  )
+}
+
 export default function Home() {
   const githubUser = 'JoaoBreder';
   const [comunidades, setComunidades] = React.useState([{
@@ -39,6 +62,18 @@ export default function Home() {
     'marcobrunodev',
     'felipefialho'
   ];
+
+  const [seguidores, setSeguidores] = React.useState([]);
+
+  React.useEffect(function() {
+    fetch('https://api.github.com/users/peas/followers')
+    .then(function (respostaDoServidor) {
+      return respostaDoServidor.json();
+    })
+    .then(function(respostaCompleta) {
+      setSeguidores(respostaCompleta);
+    })
+  }, []);
 
   return (
     <>
@@ -70,7 +105,7 @@ export default function Home() {
               
               const comunidade = {
                 id: new Date().toISOString,
-                titulo: dadosDoForm.get('title'),
+                title: dadosDoForm.get('title'),
                 image: dadosDoForm.get('image'),
               }
 
@@ -87,7 +122,7 @@ export default function Home() {
 
               <div>
                 <input placeholder="Coloque uma URL para usarmos de capa" 
-                className="image"
+                name="image"
                 aria-label="Coloque uma URL para usarmos de capa"
                 />
               </div>
@@ -99,7 +134,9 @@ export default function Home() {
           </Box>
         </div>
 
-        <div className="profileRelationsArea" style={{ gridArea: 'profileRelationsArea' }}>
+        <div className="profileRelationsArea" style={{ gridArea: 'profileRelationsArea' }}>          
+          <ProfileRelationsBox title="Seguidores" items={seguidores} />
+          
           <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">
               Comunidades ({comunidades.length})
